@@ -1,5 +1,6 @@
 import { Component, Input, Output, EventEmitter } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { Router } from '@angular/router';
 import { Plant } from '../../models/plant.interface';
 
 @Component({
@@ -52,6 +53,13 @@ import { Plant } from '../../models/plant.interface';
           [disabled]="plant.status === 'wet'">
           <span class="button-icon">💧</span>
           Water Plant
+        </button>
+        
+        <button 
+          class="details-button" 
+          (click)="viewDetails()">
+          <span class="button-icon">📊</span>
+          View Details
         </button>
       </div>
     </div>
@@ -237,6 +245,28 @@ import { Plant } from '../../models/plant.interface';
       transform: none;
     }
 
+    .details-button {
+      width: 100%;
+      background: linear-gradient(135deg, #6B7280, #4B5563);
+      color: white;
+      border: none;
+      padding: 12px 16px;
+      border-radius: 8px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      margin-top: 8px;
+    }
+
+    .details-button:hover {
+      background: linear-gradient(135deg, #4B5563, #374151);
+      transform: translateY(-1px);
+    }
+
     .button-icon {
       font-size: 16px;
     }
@@ -245,6 +275,8 @@ import { Plant } from '../../models/plant.interface';
 export class PlantCardComponent {
   @Input() plant!: Plant;
   @Output() waterPlant = new EventEmitter<number>();
+
+  constructor(private router: Router) {}
 
   getStatusText(): string {
     switch (this.plant.status) {
@@ -262,5 +294,9 @@ export class PlantCardComponent {
 
   onWaterPlant(): void {
     this.waterPlant.emit(this.plant.id);
+  }
+
+  viewDetails(): void {
+    this.router.navigate(['/plant', this.plant.id]);
   }
 }
