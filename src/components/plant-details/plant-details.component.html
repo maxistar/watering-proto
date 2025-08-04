@@ -1,0 +1,176 @@
+    <div class="plant-details" *ngIf="plant">
+      <div class="details-header">
+        <button class="back-button" (click)="goBack()">
+          <span class="back-icon">←</span>
+          Back to Dashboard
+        </button>
+        <div class="plant-status-badge" [class]="'badge-' + plant.status">
+          {{ getStatusText() }}
+        </div>
+      </div>
+
+      <div class="details-content">
+        <div class="plant-hero">
+          <div class="plant-image-large">
+            <img [src]="plant.image" [alt]="plant.name" />
+          </div>
+          <div class="plant-main-info">
+            <h1 class="plant-name">{{ plant.name }}</h1>
+            <p class="plant-type">{{ plant.type }} • {{ plant.location }}</p>
+            
+            <div class="current-stats">
+              <div class="stat-card">
+                <div class="stat-icon">💧</div>
+                <div class="stat-content">
+                  <div class="stat-value">{{ plant.soilHumidity }}%</div>
+                  <div class="stat-label">Soil Humidity</div>
+                </div>
+              </div>
+              
+              <div class="stat-card">
+                <div class="stat-icon">⏱️</div>
+                <div class="stat-content">
+                  <div class="stat-value">{{ plant.wateringDuration }}s</div>
+                  <div class="stat-label">Last Duration</div>
+                </div>
+              </div>
+              
+              <div class="stat-card">
+                <div class="stat-icon">📅</div>
+                <div class="stat-content">
+                  <div class="stat-value">{{ getDaysAgo() }}</div>
+                  <div class="stat-label">Days Ago</div>
+                </div>
+              </div>
+            </div>
+
+            <button 
+              class="water-button-large" 
+              (click)="onWaterPlant()"
+              [disabled]="plant.status === 'wet'">
+              <span class="button-icon">💧</span>
+              Water Plant Now
+            </button>
+          </div>
+        </div>
+
+        <div class="details-sections">
+          <section class="humidity-section">
+            <h2 class="section-title">Humidity Analysis</h2>
+            <div class="humidity-details">
+              <div class="humidity-gauge">
+                <div class="gauge-container">
+                  <div class="gauge-track"></div>
+                  <div 
+                    class="gauge-fill" 
+                    [style.width.%]="plant.soilHumidity"
+                    [class]="'fill-' + plant.status">
+                  </div>
+                  <div class="gauge-markers">
+                    <div class="marker" style="left: 0%">0%</div>
+                    <div class="marker" style="left: 25%">25%</div>
+                    <div class="marker" style="left: 50%">50%</div>
+                    <div class="marker" style="left: 75%">75%</div>
+                    <div class="marker" style="left: 100%">100%</div>
+                  </div>
+                </div>
+                <div class="optimal-range">
+                  <div class="range-indicator" 
+                       [style.left.%]="plant.optimalHumidity.min"
+                       [style.width.%]="plant.optimalHumidity.max - plant.optimalHumidity.min">
+                    Optimal Range: {{ plant.optimalHumidity.min }}% - {{ plant.optimalHumidity.max }}%
+                  </div>
+                </div>
+              </div>
+              
+              <div class="humidity-recommendations">
+                <h3>Recommendations</h3>
+                <div class="recommendation" *ngIf="plant.status === 'dry'">
+                  <span class="rec-icon">⚠️</span>
+                  <div>
+                    <strong>Water needed:</strong> Soil humidity is below optimal range. 
+                    Consider watering for 30-45 seconds.
+                  </div>
+                </div>
+                <div class="recommendation" *ngIf="plant.status === 'optimal'">
+                  <span class="rec-icon">✅</span>
+                  <div>
+                    <strong>Perfect condition:</strong> Soil humidity is in the optimal range. 
+                    Continue current watering schedule.
+                  </div>
+                </div>
+                <div class="recommendation" *ngIf="plant.status === 'wet'">
+                  <span class="rec-icon">🚫</span>
+                  <div>
+                    <strong>Too wet:</strong> Soil humidity is above optimal range. 
+                    Wait before next watering to prevent root rot.
+                  </div>
+                </div>
+              </div>
+            </div>
+          </section>
+
+          <section class="watering-history">
+            <h2 class="section-title">Watering History</h2>
+            <div class="history-list" *ngIf="wateringLogs.length > 0; else noHistory">
+              <div class="history-item" *ngFor="let log of wateringLogs">
+                <div class="history-date">
+                  <div class="date-day">{{ formatDay(log.timestamp) }}</div>
+                  <div class="date-time">{{ formatTime(log.timestamp) }}</div>
+                </div>
+                <div class="history-details">
+                  <div class="history-duration">{{ log.duration }}s</div>
+                  <div class="history-amount">{{ log.waterAmount }}L</div>
+                </div>
+                <div class="history-icon">💧</div>
+              </div>
+            </div>
+            <ng-template #noHistory>
+              <div class="no-history">
+                <span class="no-history-icon">📝</span>
+                <p>No watering history available for this plant.</p>
+              </div>
+            </ng-template>
+          </section>
+
+          <section class="plant-care-info">
+            <h2 class="section-title">Care Information</h2>
+            <div class="care-grid">
+              <div class="care-item">
+                <div class="care-icon">🌱</div>
+                <div class="care-content">
+                  <h4>Plant Type</h4>
+                  <p>{{ plant.type }}</p>
+                </div>
+              </div>
+              <div class="care-item">
+                <div class="care-icon">📍</div>
+                <div class="care-content">
+                  <h4>Location</h4>
+                  <p>{{ plant.location }}</p>
+                </div>
+              </div>
+              <div class="care-item">
+                <div class="care-icon">💧</div>
+                <div class="care-content">
+                  <h4>Optimal Humidity</h4>
+                  <p>{{ plant.optimalHumidity.min }}% - {{ plant.optimalHumidity.max }}%</p>
+                </div>
+              </div>
+              <div class="care-item">
+                <div class="care-icon">⏰</div>
+                <div class="care-content">
+                  <h4>Last Watered</h4>
+                  <p>{{ formatFullDate(plant.lastWatered) }}</p>
+                </div>
+              </div>
+            </div>
+          </section>
+        </div>
+      </div>
+    </div>
+
+    <div class="loading" *ngIf="!plant">
+      <div class="loading-spinner"></div>
+      <p>Loading plant details...</p>
+    </div>

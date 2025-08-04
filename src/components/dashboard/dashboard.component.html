@@ -1,0 +1,39 @@
+<div class="dashboard">
+      <header class="dashboard-header">
+        <div class="header-content">
+          <h1 class="dashboard-title">🌱 Smart Watering System</h1>
+          <p class="dashboard-subtitle">Monitor and care for your plants automatically</p>
+        </div>
+        <div class="system-stats">
+          <div class="stat">
+            <div class="stat-number">{{ plants.length }}</div>
+            <div class="stat-label">Plants</div>
+          </div>
+          <div class="stat">
+            <div class="stat-number">{{ getHealthyPlantsCount() }}</div>
+            <div class="stat-label">Healthy</div>
+          </div>
+          <div class="stat">
+            <div class="stat-number">{{ getNeedsWaterCount() }}</div>
+            <div class="stat-label">Need Water</div>
+          </div>
+        </div>
+      </header>
+
+      <div class="dashboard-content">
+        <section class="water-tank-section">
+          <app-water-tank [waterTank]="waterTank"></app-water-tank>
+        </section>
+
+        <section class="plants-section">
+          <h2 class="section-title">Plant Monitoring</h2>
+          <div class="plants-grid">
+            <app-plant-card 
+              *ngFor="let plant of plants" 
+              [plant]="plant"
+              (waterPlant)="onWaterPlant($event)">
+            </app-plant-card>
+          </div>
+        </section>
+      </div>
+    </div>

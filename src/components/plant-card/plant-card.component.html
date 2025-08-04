@@ -1,0 +1,55 @@
+    <div class="plant-card" [class]="'status-' + plant.status">
+      <div class="plant-image">
+        <img [src]="plant.image" [alt]="plant.name" />
+        <div class="status-badge" [class]="'badge-' + plant.status">
+          {{ getStatusText() }}
+        </div>
+      </div>
+      
+      <div class="plant-info">
+        <h3 class="plant-name">{{ plant.name }}</h3>
+        <p class="plant-type">{{ plant.type }} • {{ plant.location }}</p>
+        
+        <div class="humidity-meter">
+          <div class="humidity-label">Soil Humidity</div>
+          <div class="humidity-bar">
+            <div 
+              class="humidity-fill" 
+              [style.width.%]="plant.soilHumidity"
+              [class]="'fill-' + plant.status">
+            </div>
+          </div>
+          <div class="humidity-value">{{ plant.soilHumidity }}%</div>
+        </div>
+        
+        <div class="watering-info">
+          <div class="info-row">
+            <span class="label">Last watered:</span>
+            <span class="value">{{ formatDate(plant.lastWatered) }}</span>
+          </div>
+          <div class="info-row">
+            <span class="label">Duration:</span>
+            <span class="value">{{ plant.wateringDuration }}s</span>
+          </div>
+          <div class="info-row">
+            <span class="label">Optimal range:</span>
+            <span class="value">{{ plant.optimalHumidity.min }}-{{ plant.optimalHumidity.max }}%</span>
+          </div>
+        </div>
+        
+        <button 
+          class="water-button" 
+          (click)="onWaterPlant()"
+          [disabled]="plant.status === 'wet'">
+          <span class="button-icon">💧</span>
+          Water Plant
+        </button>
+        
+        <button 
+          class="details-button" 
+          (click)="viewDetails()">
+          <span class="button-icon">📊</span>
+          View Details
+        </button>
+      </div>
+    </div>
