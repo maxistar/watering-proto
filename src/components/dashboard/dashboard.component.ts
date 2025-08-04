@@ -1,0 +1,189 @@
+import { Component, OnInit } from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { PlantCardComponent } from '../plant-card/plant-card.component';
+import { WaterTankComponent } from '../water-tank/water-tank.component';
+import { PlantService } from '../../services/plant.service';
+import { Plant, WaterTank } from '../../models/plant.interface';
+
+@Component({
+  selector: 'app-dashboard',
+  standalone: true,
+  imports: [CommonModule, PlantCardComponent, WaterTankComponent],
+  template: `
+    <div class="dashboard">
+      <header class="dashboard-header">
+        <div class="header-content">
+          <h1 class="dashboard-title">🌱 Smart Watering System</h1>
+          <p class="dashboard-subtitle">Monitor and care for your plants automatically</p>
+        </div>
+        <div class="system-stats">
+          <div class="stat">
+            <div class="stat-number">{{ plants.length }}</div>
+            <div class="stat-label">Plants</div>
+          </div>
+          <div class="stat">
+            <div class="stat-number">{{ getHealthyPlantsCount() }}</div>
+            <div class="stat-label">Healthy</div>
+          </div>
+          <div class="stat">
+            <div class="stat-number">{{ getNeedsWaterCount() }}</div>
+            <div class="stat-label">Need Water</div>
+          </div>
+        </div>
+      </header>
+
+      <div class="dashboard-content">
+        <section class="water-tank-section">
+          <app-water-tank [waterTank]="waterTank"></app-water-tank>
+        </section>
+
+        <section class="plants-section">
+          <h2 class="section-title">Plant Monitoring</h2>
+          <div class="plants-grid">
+            <app-plant-card 
+              *ngFor="let plant of plants" 
+              [plant]="plant"
+              (waterPlant)="onWaterPlant($event)">
+            </app-plant-card>
+          </div>
+        </section>
+      </div>
+    </div>
+  `,
+  styles: [`
+    .dashboard {
+      min-height: 100vh;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      padding: 20px;
+    }
+
+    .dashboard-header {
+      background: white;
+      border-radius: 16px;
+      padding: 32px;
+      margin-bottom: 32px;
+      box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .header-content h1 {
+      font-size: 32px;
+      font-weight: 800;
+      margin: 0 0 8px 0;
+      color: #1F2937;
+    }
+
+    .header-content p {
+      font-size: 16px;
+      color: #6B7280;
+      margin: 0;
+    }
+
+    .system-stats {
+      display: flex;
+      gap: 32px;
+    }
+
+    .stat {
+      text-align: center;
+    }
+
+    .stat-number {
+      font-size: 36px;
+      font-weight: 800;
+      color: #2563EB;
+      margin-bottom: 4px;
+    }
+
+    .stat-label {
+      font-size: 14px;
+      color: #6B7280;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .dashboard-content {
+      display: grid;
+      grid-template-columns: 1fr 2fr;
+      gap: 32px;
+    }
+
+    .section-title {
+      font-size: 24px;
+      font-weight: 700;
+      color: white;
+      margin: 0 0 24px 0;
+      text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    }
+
+    .plants-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 24px;
+    }
+
+    @media (max-width: 1200px) {
+      .dashboard-content {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    @media (max-width: 768px) {
+      .dashboard {
+        padding: 16px;
+      }
+
+      .dashboard-header {
+        flex-direction: column;
+        text-align: center;
+        gap: 24px;
+      }
+
+      .system-stats {
+        gap: 24px;
+      }
+
+      .plants-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+  `]
+})
+export class DashboardComponent implements OnInit {
+  plants: Plant[] = [];
+  waterTank!: WaterTank;
+
+  constructor(private plantService: PlantService) {}
+
+  ngOnInit(): void {
+    this.loadData();
+  }
+
+  loadData(): void {
+    this.plantService.getPlants().subscribe(plants => {
+      this.plants = plants;
+    });
+
+    this.plantService.getWaterTank().subscribe(tank => {
+      this.waterTank = tank;
+    });
+  }
+
+  onWaterPlant(plantId: number): void {
+    this.plantService.waterPlant(plantId, 30).subscribe(success => {
+      if (success) {
+        this.loadData(); // Refresh data after watering
+      }
+    });
+  }
+
+  getHealthyPlantsCount(): number {
+    return this.plants.filter(plant => plant.status === 'optimal').length;
+  }
+
+  getNeedsWaterCount(): number {
+    return this.plants.filter(plant => plant.status === 'dry').length;
+  }
+}
