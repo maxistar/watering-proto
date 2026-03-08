@@ -28,6 +28,16 @@
       margin: 0;
     }
 
+    .logout-button {
+      border: none;
+      border-radius: 8px;
+      background: #b91c1c;
+      color: white;
+      padding: 10px 14px;
+      font-weight: 600;
+      cursor: pointer;
+    }
+
     .system-stats {
       display: flex;
       gap: 32px;

@@ -1,9 +1,12 @@
 <div class="dashboard">
+      <div class="dashboard-error" *ngIf="errorMessage">{{ errorMessage }}</div>
+      <div class="dashboard-loading" *ngIf="isLoading">Loading dashboard...</div>
       <header class="dashboard-header">
         <div class="header-content">
           <h1 class="dashboard-title">🌱 Smart Watering System</h1>
           <p class="dashboard-subtitle">Monitor and care for your plants automatically</p>
         </div>
+        <button class="logout-button" (click)="logout()">Logout</button>
         <div class="system-stats">
           <div class="stat">
             <div class="stat-number">{{ plants.length }}</div>
@@ -21,7 +24,7 @@
       </header>
 
       <div class="dashboard-content">
-        <section class="water-tank-section">
+        <section class="water-tank-section" *ngIf="waterTank">
           <app-water-tank [waterTank]="waterTank"></app-water-tank>
         </section>
 
