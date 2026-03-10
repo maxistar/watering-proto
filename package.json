@@ -4,7 +4,11 @@
   "scripts": {
     "ng": "ng",
     "start": "ng serve",
-    "build": "ng build"
+    "build": "ng build",
+    "typecheck": "tsc -p tsconfig.json --noEmit",
+    "lint": "npm run typecheck",
+    "unit": "tsc -p tsconfig.unit.json && node --test tests/unit/**/*.test.mjs",
+    "test:ci": "npm run unit"
   },
   "dependencies": {
     "@angular/animations": "^20.0.0",

@@ -2,6 +2,7 @@ import { Component, Input, Output, EventEmitter } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
 import { Plant } from '../../models/plant.interface';
+import { statusToText } from '../../utils/plant-metrics';
 
 @Component({
   selector: 'app-plant-card',
@@ -17,12 +18,7 @@ export class PlantCardComponent {
   constructor(private router: Router) {}
 
   getStatusText(): string {
-    switch (this.plant.status) {
-      case 'dry': return 'Needs Water';
-      case 'optimal': return 'Healthy';
-      case 'wet': return 'Too Wet';
-      default: return 'Unknown';
-    }
+    return statusToText(this.plant.status);
   }
 
   formatDate(dateString: string): string {

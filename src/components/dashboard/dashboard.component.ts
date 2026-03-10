@@ -6,6 +6,7 @@ import { PlantService } from '../../services/plant.service';
 import { Plant, WaterTank } from '../../models/plant.interface';
 import { AuthService } from '../../services/auth.service';
 import { Router } from '@angular/router';
+import { countHealthyPlants, countPlantsNeedingWater } from '../../utils/plant-metrics';
 
 @Component({
   selector: 'app-dashboard',
@@ -66,11 +67,11 @@ export class DashboardComponent implements OnInit {
   }
 
   getHealthyPlantsCount(): number {
-    return this.plants.filter(plant => plant.status === 'optimal').length;
+    return countHealthyPlants(this.plants);
   }
 
   getNeedsWaterCount(): number {
-    return this.plants.filter(plant => plant.status === 'dry').length;
+    return countPlantsNeedingWater(this.plants);
   }
 
   logout(): void {
