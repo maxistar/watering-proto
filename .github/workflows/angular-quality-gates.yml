@@ -1,12 +1,5 @@
 name: Angular Quality Gates
 
-on:
-  pull_request:
-    paths:
-      - 'watering-proto/**'
-      - '.github/workflows/angular-quality-gates.yml'
-  workflow_dispatch:
-
 jobs:
   lint-and-unit:
     runs-on: ubuntu-latest
