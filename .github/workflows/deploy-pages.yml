@@ -33,6 +33,10 @@ jobs:
       - name: Run unit tests
         run: npm run test:ci
 
+      - name: Write production environment
+        run: |
+          printf 'export const environment = { apiBaseUrl: "%s" };\n' "${{ vars.ANGULAR_BACKEND_URL }}" > src/environments/environment.prod.ts
+
       - name: Build production static app
         run: npm run build -- --configuration production
 
